@@ -1,0 +1,27 @@
+# Maven Build Output
+target/
+*.class
+
+# IDE and Editor Files
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+
+# Environment & Sensitive Credentials
+.env
+db_config.properties
+*.log
+
+# OS Generated Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Executable Archives
+*.jar
+*.war
+*.zip
+!smart-hospital-management-system.zip

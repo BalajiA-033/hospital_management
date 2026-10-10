@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AuraCare™ Smart Hospital Management System | Real-Time Clinical Command</title>
+  <meta name="description" content="Next-generation database-driven smart hospital management web application featuring atomic bed allocation, real-time emergency triage, doctor scheduling, and pharmacy inventory control.">
+  <meta name="keywords" content="hospital management system, DBMS, real-time dashboard, bed allocation, emergency triage, pharmacy inventory">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand-section">
+        <div class="brand-icon-wrapper">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 6v12M6 12h12"/>
+          </svg>
+        </div>
+        <div class="brand-info">
+          <span class="brand-title">AuraCare™ <span class="brand-badge">SHMS</span></span>
+          <span class="brand-sub">Clinical Operating System</span>
+        </div>
+      </div>
+
+      <ul class="nav-menu" id="navMenu">
+        <li class="nav-item active">
+          <button id="navBtnDashboard" onclick="switchTab('dashboard')">
+            <span class="nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+              </svg>
+            </span>
+            <span>Dashboard</span>
+            <span class="nav-badge badge-primary" id="kpiLiveTag">LIVE</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button id="navBtnDoctors" onclick="switchTab('doctors')">
+            <span class="nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </span>
+            <span>Doctors</span>
+            <span class="nav-badge badge-success" id="navDocBadge">6 Active</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button id="navBtnBeds" onclick="switchTab('beds')">
+            <span class="nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"/>
+              </svg>
+            </span>
+            <span>Bed Management</span>
+            <span class="nav-badge badge-warning" id="navBedBadge">75%</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button id="navBtnEmergency" onclick="switchTab('emergency')">
+            <span class="nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+            </span>
+            <span>Emergency Intake</span>
+            <span class="nav-badge badge-danger" id="navEmergencyBadge">3 Crit</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button id="navBtnPatients" onclick="switchTab('patients')">
+            <span class="nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+              </svg>
+            </span>
+            <span>Patients Directory</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button id="navBtnPharmacy" onclick="switchTab('pharmacy')">
+            <span class="nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/>
+              </svg>
+            </span>
+            <span>Pharmacy & Stock</span>
+            <span class="nav-badge badge-danger" id="navPharmBadge">2 Low</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button id="navBtnReports" onclick="switchTab('reports')">
+            <span class="nav-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+              </svg>
+            </span>
+            <span>DBMS SQL Reports</span>
+          </button>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="role-switcher-card">
+          <div class="user-avatar" id="currentUserAvatar">AD</div>
+          <div class="user-meta">
+            <span class="user-name" id="currentUserName">Admin (Root)</span>
+            <span class="user-role" id="currentUserRole">Full Clinical Access</span>
+          </div>
+          <select class="role-select" id="roleSelector" onchange="switchRole(this.value)">
+            <option value="admin">Admin</option>
+            <option value="doctor">Dr. Watson</option>
+            <option value="staff">Staff Mary</option>
+          </select>
+        </div>
+
+        <div class="system-status-indicator">
+          <span><span class="status-dot-pulse"></span>Host: Localhost:8080</span>
+          <button class="btn-sm btn-secondary" onclick="resetDemoData()" title="Revert to initial demo database">Reset DB</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Shell -->
+    <div class="main-wrapper">
+      
+      <!-- Topbar Header -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="page-title-box">
+            <h1 id="pageHeadingTitle">Clinical Command Center</h1>
+            <span class="page-subtitle" id="pageSubtitleText">Real-Time Hospital Telemetry & Patient Workflows</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="live-clock-badge" id="liveClockDisplay">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span id="liveClockText">--:--:--</span>
+          </div>
+
+          <div class="search-input-box">
+            <span class="search-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </span>
+            <input type="text" id="globalSearchInput" placeholder="Quick search patient or drug..." oninput="handleGlobalSearch(this.value)">
+          </div>
+
+          <!-- Theme Toggle -->
+          <button class="icon-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+            <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          </button>
+
+          <!-- Emergency Fast-Admit Button -->
+          <button class="btn-danger" id="quickEmergencyBtn" onclick="openEmergencyModal()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Emergency Admit</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Body Panels Container -->
+      <main class="page-content">
+
+        <!-- ==================== TAB 1: DASHBOARD ==================== -->
+        <section class="tab-panel active" id="tabDashboard">
+          
+          <!-- Hero Command Card -->
+          <div class="command-hero-card">
+            <div class="hero-background-image"></div>
+            <div class="hero-content">
+              <span class="hero-badge-live">
+                <span class="status-dot-pulse"></span> SYSTEM HEALTH: OPTIMAL (5s POLLING ACTIVE)
+              </span>
+              <h2>Smart Hospital Operations Hub</h2>
+              <p>Real-time synchronisation across Emergency Admissions, ICU Bed Allocation, Doctor Rotations, and Pharmacy Inventory with row-level transaction safety.</p>
+              <div class="hero-actions">
+                <button class="btn-primary" onclick="openAppointmentModal()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <span>Book Appointment</span>
+                </button>
+                <button class="btn-secondary" onclick="switchTab('beds')">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"/></svg>
+                  <span>Inspect Bed Grid</span>
+                </button>
+                <button class="btn-secondary" onclick="switchTab('pharmacy')">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>
+                  <span>Dispense Medicines</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- KPI Metric Cards Grid -->
+          <div class="kpi-grid">
+            <div class="kpi-card cyan">
+              <div class="kpi-header">
+                <span class="kpi-title">Total In-Patients</span>
+                <div class="kpi-icon-box">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+              </div>
+              <div class="kpi-value-box">
+                <span class="kpi-value" id="kpiPatientsCount">128</span>
+                <span class="kpi-trend trend-up">↑ +8.4%</span>
+              </div>
+              <div class="kpi-progress">
+                <div class="kpi-progress-bar" style="width: 78%; background: var(--primary);"></div>
+              </div>
+            </div>
+
+            <div class="kpi-card green">
+              <div class="kpi-header">
+                <span class="kpi-title">Active Doctors</span>
+                <div class="kpi-icon-box">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+                </div>
+              </div>
+              <div class="kpi-value-box">
+                <span class="kpi-value" id="kpiDoctorsActive">5 / 6</span>
+                <span class="kpi-trend trend-up">83% Duty</span>
+              </div>
+              <div class="kpi-progress">
+                <div class="kpi-progress-bar" style="width: 83%; background: var(--success);"></div>
+              </div>
+            </div>
+
+            <div class="kpi-card amber">
+              <div class="kpi-header">
+                <span class="kpi-title">Bed Occupancy</span>
+                <div class="kpi-icon-box">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"/></svg>
+                </div>
+              </div>
+              <div class="kpi-value-box">
+                <span class="kpi-value" id="kpiBedsRate">75%</span>
+                <span class="kpi-trend trend-neutral" id="kpiBedsRatio">6 / 8 Beds</span>
+              </div>
+              <div class="kpi-progress">
+                <div class="kpi-progress-bar" id="kpiBedsProgressBar" style="width: 75%; background: var(--warning);"></div>
+              </div>
+            </div>
+
+            <div class="kpi-card red">
+              <div class="kpi-header">
+                <span class="kpi-title">Emergency Cases</span>
+                <div class="kpi-icon-box">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                </div>
+              </div>
+              <div class="kpi-value-box">
+                <span class="kpi-value" id="kpiEmergencyCount">3</span>
+                <span class="kpi-trend trend-alert">⚡ High Priority</span>
+              </div>
+              <div class="kpi-progress">
+                <div class="kpi-progress-bar" style="width: 60%; background: var(--danger);"></div>
+              </div>
+            </div>
+
+            <div class="kpi-card purple">
+              <div class="kpi-header">
+                <span class="kpi-title">Low Stock Medicines</span>
+                <div class="kpi-icon-box">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/></svg>
+                </div>
+              </div>
+              <div class="kpi-value-box">
+                <span class="kpi-value" id="kpiLowStockCount">2</span>
+                <span class="kpi-trend trend-alert">Reorder Req.</span>
+              </div>
+              <div class="kpi-progress">
+                <div class="kpi-progress-bar" style="width: 35%; background: var(--purple);"></div>
+              </div>
+            </div>
+
+            <div class="kpi-card blue">
+              <div class="kpi-header">
+                <span class="kpi-title">Today's Appointments</span>
+                <div class="kpi-icon-box">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
+                </div>
+              </div>
+              <div class="kpi-value-box">
+                <span class="kpi-value" id="kpiAppointmentsCount">14</span>
+                <span class="kpi-trend trend-up">100% Attended</span>
+              </div>
+              <div class="kpi-progress">
+                <div class="kpi-progress-bar" style="width: 70%; background: var(--accent-blue);"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Two Column Layout: Wards & Real-time Live Feed -->
+          <div class="dashboard-grid-2">
+            <!-- Left: Ward Occupancy Matrix -->
+            <div class="glass-card">
+              <div class="card-title-row">
+                <h3 class="card-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                  Ward Occupancy Matrix & Bed Allocation Status
+                </h3>
+                <button class="btn-sm btn-secondary" onclick="switchTab('beds')">Open Bed Grid →</button>
+              </div>
+
+              <div id="wardProgressContainer" style="display: flex; flex-direction: column; gap: 16px;">
+                <!-- Dynamically generated via JS -->
+              </div>
+            </div>
+
+            <!-- Right: Real-time Live Feed / Events Log -->
+            <div class="glass-card">
+              <div class="card-title-row">
+                <h3 class="card-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                  Clinical Live Stream
+                </h3>
+                <span class="badge-success nav-badge"><span class="status-dot-pulse"></span>Active Poller</span>
+              </div>
+
+              <div class="live-feed-list" id="dashboardLiveFeed">
+                <!-- Dynamically populated events -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== TAB 2: DOCTORS ==================== -->
+        <section class="tab-panel" id="tabDoctors">
+          <div class="filters-toolbar">
+            <div class="filter-pills-group" id="doctorDeptFilters">
+              <button class="filter-pill active" onclick="filterDoctorsByDept('ALL', this)">All Specialties</button>
+              <button class="filter-pill" onclick="filterDoctorsByDept('Cardiology', this)">Cardiology</button>
+              <button class="filter-pill" onclick="filterDoctorsByDept('Neurology', this)">Neurology</button>
+              <button class="filter-pill" onclick="filterDoctorsByDept('Pediatrics', this)">Pediatrics</button>
+              <button class="filter-pill" onclick="filterDoctorsByDept('Orthopedics', this)">Orthopedics</button>
+              <button class="filter-pill" onclick="filterDoctorsByDept('General Medicine', this)">General Medicine</button>
+            </div>
+
+            <button class="btn-primary" onclick="openAppointmentModal()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span>Book Doctor Consultation</span>
+            </button>
+          </div>
+
+          <div class="doctor-grid" id="doctorCardsGrid">
+            <!-- Populated via JS -->
+          </div>
+        </section>
+
+        <!-- ==================== TAB 3: BED MANAGEMENT ==================== -->
+        <section class="tab-panel" id="tabBeds">
+          <div class="filters-toolbar">
+            <div class="filter-pills-group" id="bedWardFilters">
+              <button class="filter-pill active" onclick="filterBeds('ALL', this)">All Wards</button>
+              <button class="filter-pill" onclick="filterBeds('ICU', this)">ICU Ward</button>
+              <button class="filter-pill" onclick="filterBeds('GENERAL', this)">General Wards</button>
+              <button class="filter-pill" onclick="filterBeds('EMERGENCY', this)">Emergency Ward</button>
+              <button class="filter-pill" onclick="filterBeds('AVAILABLE_ONLY', this)">Free Beds Only</button>
+            </div>
+
+            <div style="font-size: 0.85rem; color: var(--text-secondary);" id="bedOccupancyStatsText">
+              Loading bed allocation stats...
+            </div>
+          </div>
+
+          <div class="bed-grid-container" id="bedGridContainer">
+            <!-- Populated via JS -->
+          </div>
+        </section>
+
+        <!-- ==================== TAB 4: EMERGENCY & TRIAGE ==================== -->
+        <section class="tab-panel" id="tabEmergency">
+          <div class="filters-toolbar">
+            <span style="font-size: 0.88rem; font-weight: 600; color: var(--text-secondary);">
+              Live Triage Priority Matrix — Real-time Emergency Board
+            </span>
+            <button class="btn-danger" onclick="openEmergencyModal()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span>+ Register Emergency Intake</span>
+            </button>
+          </div>
+
+          <div class="triage-board-grid">
+            <!-- Critical Column -->
+            <div class="triage-column">
+              <div class="triage-col-header critical">
+                <span>🔴 CRITICAL (Level 1)</span>
+                <span class="nav-badge badge-danger" id="badgeCriticalCount">0</span>
+              </div>
+              <div class="triage-cards-list" id="triageListCritical"></div>
+            </div>
+
+            <!-- High Column -->
+            <div class="triage-column">
+              <div class="triage-col-header high">
+                <span>🟠 HIGH (Level 2)</span>
+                <span class="nav-badge badge-warning" id="badgeHighCount">0</span>
+              </div>
+              <div class="triage-cards-list" id="triageListHigh"></div>
+            </div>
+
+            <!-- Medium Column -->
+            <div class="triage-column">
+              <div class="triage-col-header medium">
+                <span>🟡 MEDIUM (Level 3)</span>
+                <span class="nav-badge badge-primary" id="badgeMediumCount">0</span>
+              </div>
+              <div class="triage-cards-list" id="triageListMedium"></div>
+            </div>
+
+            <!-- Low Column -->
+            <div class="triage-column">
+              <div class="triage-col-header low">
+                <span>🟢 LOW (Level 4)</span>
+                <span class="nav-badge badge-success" id="badgeLowCount">0</span>
+              </div>
+              <div class="triage-cards-list" id="triageListLow"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== TAB 5: PATIENTS ==================== -->
+        <section class="tab-panel" id="tabPatients">
+          <div class="filters-toolbar">
+            <div class="filter-pills-group" id="patientBloodFilters">
+              <button class="filter-pill active" onclick="filterPatientsByBlood('ALL', this)">All Blood Groups</button>
+              <button class="filter-pill" onclick="filterPatientsByBlood('O+', this)">O+</button>
+              <button class="filter-pill" onclick="filterPatientsByBlood('A+', this)">A+</button>
+              <button class="filter-pill" onclick="filterPatientsByBlood('B+', this)">B+</button>
+              <button class="filter-pill" onclick="filterPatientsByBlood('AB+', this)">AB+</button>
+              <button class="filter-pill" onclick="filterPatientsByBlood('O-', this)">O-</button>
+            </div>
+
+            <button class="btn-primary" onclick="openPatientModal()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span>+ Register New Patient</span>
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="modern-table">
+              <thead>
+                <tr>
+                  <th>PID</th>
+                  <th>Patient Full Name</th>
+                  <th>Gender / Age</th>
+                  <th>Blood Group</th>
+                  <th>Contact Phone</th>
+                  <th>Emergency Contact</th>
+                  <th>Status / Care Bed</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="patientsTableBody">
+                <!-- Populated via JS -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ==================== TAB 6: PHARMACY ==================== -->
+        <section class="tab-panel" id="tabPharmacy">
+          <div class="filters-toolbar">
+            <div class="filter-pills-group" id="pharmacyCategoryFilters">
+              <button class="filter-pill active" onclick="filterPharmacy('ALL', this)">All Medicines</button>
+              <button class="filter-pill" onclick="filterPharmacy('LOW_STOCK', this)">⚠️ Low Stock Only</button>
+              <button class="filter-pill" onclick="filterPharmacy('Analgesic', this)">Analgesic</button>
+              <button class="filter-pill" onclick="filterPharmacy('Antibiotic', this)">Antibiotics</button>
+              <button class="filter-pill" onclick="filterPharmacy('Cardiovascular', this)">Cardio</button>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+              <button class="btn-secondary" onclick="openRestockModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>Restock Medication</span>
+              </button>
+              <button class="btn-primary" onclick="openDispenseModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/></svg>
+                <span>Dispense Medication</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="modern-table">
+              <thead>
+                <tr>
+                  <th>Drug Name</th>
+                  <th>Therapeutic Category</th>
+                  <th>Unit Price ($)</th>
+                  <th>In Stock</th>
+                  <th>Reorder Level</th>
+                  <th>Manufacturer</th>
+                  <th>Expiry Date</th>
+                  <th>Stock Health</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="pharmacyTableBody">
+                <!-- Populated via JS -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ==================== TAB 7: DBMS SQL REPORTS ==================== -->
+        <section class="tab-panel" id="tabReports">
+          <div class="filters-toolbar">
+            <span style="font-weight: 600; color: var(--text-secondary);">
+              Analytical DBMS SQL Queries (Embedded Live Demonstration)
+            </span>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-secondary btn-sm" onclick="exportReportToCSV()">Export CSV</button>
+              <button class="btn-secondary btn-sm" onclick="exportReportToJSON()">Export JSON</button>
+            </div>
+          </div>
+
+          <div class="filter-pills-group" style="margin-bottom: -10px;">
+            <button class="filter-pill active" onclick="loadDbmsReport(1, this)">Query 1: Doctor Consultations (JOIN + GROUP BY)</button>
+            <button class="filter-pill" onclick="loadDbmsReport(2, this)">Query 2: Ward Bed Occupancy & Projected Revenue</button>
+            <button class="filter-pill" onclick="loadDbmsReport(3, this)">Query 3: Emergency Intake Triage Subquery</button>
+            <button class="filter-pill" onclick="loadDbmsReport(4, this)">Query 4: Pharmacy Inventory Stock Valuation</button>
+          </div>
+
+          <div class="sql-console-box" id="sqlQueryDisplayBox">
+            <!-- Highlighted SQL query code -->
+          </div>
+
+          <div class="table-responsive">
+            <table class="modern-table">
+              <thead id="reportTableHead">
+                <!-- Dynamically loaded columns -->
+              </thead>
+              <tbody id="reportTableBody">
+                <!-- Dynamically loaded rows -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 1: BOOK APPOINTMENT ==================== -->
+  <div class="modal-overlay" id="modalAppointment">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Schedule Doctor Consultation</h3>
+        <button class="close-btn" onclick="closeModal('modalAppointment')">&times;</button>
+      </div>
+      <form id="appointmentForm" onsubmit="handleAppointmentSubmit(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="apptPatientSelect">Select Patient *</label>
+            <select id="apptPatientSelect" required></select>
+          </div>
+          <div class="form-group">
+            <label for="apptDoctorSelect">Select Consulting Doctor *</label>
+            <select id="apptDoctorSelect" required></select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="apptDateInput">Appointment Date *</label>
+              <input type="date" id="apptDateInput" required>
+            </div>
+            <div class="form-group">
+              <label for="apptTimeSlot">Time Slot *</label>
+              <select id="apptTimeSlot" required>
+                <option value="09:00 AM">09:00 AM</option>
+                <option value="10:00 AM">10:00 AM</option>
+                <option value="11:30 AM">11:30 AM</option>
+                <option value="02:00 PM">02:00 PM</option>
+                <option value="03:30 PM">03:30 PM</option>
+                <option value="04:30 PM">04:30 PM</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="apptReason">Clinical Reason / Chief Complaint *</label>
+            <textarea id="apptReason" rows="2" placeholder="e.g. Chronic chest discomfort, routine cardiac checkup" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalAppointment')">Cancel</button>
+          <button type="submit" class="btn-primary">Confirm Booking</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 2: ALLOCATE BED ==================== -->
+  <div class="modal-overlay" id="modalAllocateBed">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Atomic Bed Allocation</h3>
+        <button class="close-btn" onclick="closeModal('modalAllocateBed')">&times;</button>
+      </div>
+      <form id="allocateBedForm" onsubmit="handleBedAllocationSubmit(event)">
+        <div class="modal-body">
+          <input type="hidden" id="allocBedId">
+          <div class="form-group">
+            <label>Designated Bed</label>
+            <input type="text" id="allocBedDisplay" readonly style="opacity: 0.8; font-weight: 600;">
+          </div>
+          <div class="form-group">
+            <label for="allocPatientSelect">Assign To Patient *</label>
+            <select id="allocPatientSelect" required></select>
+          </div>
+          <div class="form-group">
+            <label for="allocNotes">Clinical Admission Notes</label>
+            <textarea id="allocNotes" rows="2" placeholder="e.g. Post-operative recovery monitoring, continuous vitals tracking"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalAllocateBed')">Cancel</button>
+          <button type="submit" class="btn-primary">Execute Allocation (FOR UPDATE Lock)</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 3: EMERGENCY ADMISSION ==================== -->
+  <div class="modal-overlay" id="modalEmergency">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 style="color: var(--danger);">🚨 Emergency Triage Admission</h3>
+        <button class="close-btn" onclick="closeModal('modalEmergency')">&times;</button>
+      </div>
+      <form id="emergencyForm" onsubmit="handleEmergencySubmit(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="emPatientName">Patient Temporary or Registered Name *</label>
+            <input type="text" id="emPatientName" placeholder="e.g. John Doe / Unconscious Male (~35yr)" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="emTriagePriority">Triage Priority Level *</label>
+              <select id="emTriagePriority" required>
+                <option value="CRITICAL">🔴 CRITICAL (Immediate Resuscitation)</option>
+                <option value="HIGH">🟠 HIGH (Urgent &lt;15 mins)</option>
+                <option value="MEDIUM">🟡 MEDIUM (Stable, needs care)</option>
+                <option value="LOW">🟢 LOW (Minor Injury)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="emDoctorSelect">Assigned Doctor</label>
+              <select id="emDoctorSelect"></select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="emCondition">Condition Description / Symptoms *</label>
+            <textarea id="emCondition" rows="3" placeholder="e.g. Acute trauma, severe respiratory distress, SPO2 82%" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalEmergency')">Cancel</button>
+          <button type="submit" class="btn-danger">Admit to Emergency Ward</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 4: REGISTER PATIENT ==================== -->
+  <div class="modal-overlay" id="modalPatient">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Register New Patient (EHR)</h3>
+        <button class="close-btn" onclick="closeModal('modalPatient')">&times;</button>
+      </div>
+      <form id="newPatientForm" onsubmit="handleNewPatientSubmit(event)">
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="pFirstName">First Name *</label>
+              <input type="text" id="pFirstName" required>
+            </div>
+            <div class="form-group">
+              <label for="pLastName">Last Name *</label>
+              <input type="text" id="pLastName" required>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="pGender">Gender *</label>
+              <select id="pGender" required>
+                <option value="MALE">Male</option>
+                <option value="FEMALE">Female</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="pBloodGroup">Blood Group *</label>
+              <select id="pBloodGroup" required>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="pDob">Date of Birth *</label>
+              <input type="date" id="pDob" required>
+            </div>
+            <div class="form-group">
+              <label for="pPhone">Contact Phone *</label>
+              <input type="tel" id="pPhone" placeholder="555-0100" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="pEmergencyContact">Emergency Contact Phone *</label>
+            <input type="tel" id="pEmergencyContact" placeholder="555-0999" required>
+          </div>
+          <div class="form-group">
+            <label for="pAddress">Residential Address</label>
+            <input type="text" id="pAddress" placeholder="e.g. 742 Evergreen Terrace, Springfield">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalPatient')">Cancel</button>
+          <button type="submit" class="btn-primary">Save Patient Record</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 5: DISPENSE MEDICATION ==================== -->
+  <div class="modal-overlay" id="modalDispense">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Dispense Prescription Medication</h3>
+        <button class="close-btn" onclick="closeModal('modalDispense')">&times;</button>
+      </div>
+      <form id="dispenseForm" onsubmit="handleDispenseSubmit(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="dispenseMedSelect">Select Medication *</label>
+            <select id="dispenseMedSelect" onchange="updateDispenseCalculation()" required></select>
+          </div>
+          <div class="form-group">
+            <label for="dispensePatientSelect">Prescribed Patient *</label>
+            <select id="dispensePatientSelect" required></select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="dispenseQty">Quantity to Dispense *</label>
+              <input type="number" id="dispenseQty" min="1" max="100" value="1" oninput="updateDispenseCalculation()" required>
+            </div>
+            <div class="form-group">
+              <label>Total Billed Cost</label>
+              <input type="text" id="dispenseTotalCostDisplay" readonly style="font-weight: 700; color: var(--accent-cyan);">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalDispense')">Cancel</button>
+          <button type="submit" class="btn-primary">Confirm & Deduct Stock</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 6: RESTOCK MEDICATION ==================== -->
+  <div class="modal-overlay" id="modalRestock">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Restock Pharmacy Inventory</h3>
+        <button class="close-btn" onclick="closeModal('modalRestock')">&times;</button>
+      </div>
+      <form id="restockForm" onsubmit="handleRestockSubmit(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="restockMedSelect">Select Medication *</label>
+            <select id="restockMedSelect" required></select>
+          </div>
+          <div class="form-group">
+            <label for="restockQty">Units to Restock *</label>
+            <input type="number" id="restockQty" min="5" value="50" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalRestock')">Cancel</button>
+          <button type="submit" class="btn-primary">Update Inventory</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
